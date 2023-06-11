@@ -11,15 +11,23 @@ class ComposerStaticInit0d27dc498cc2034d7dac5f64accced16
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '2df68f9e79c919e2d88506611769ed2e' => __DIR__ . '/..' . '/respect/stringifier/src/stringify.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Slim\\Psr7\\' => 10,
             'Slim\\' => 5,
             'Selective\\BasePath\\' => 19,
+        ),
+        'R' => 
+        array (
+            'Respect\\Validation\\' => 19,
+            'Respect\\Stringifier\\' => 20,
         ),
         'P' => 
         array (
@@ -27,10 +35,6 @@ class ComposerStaticInit0d27dc498cc2034d7dac5f64accced16
             'Psr\\Http\\Server\\' => 16,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
-        ),
-        'J' => 
-        array (
-            'JsonSchema\\' => 11,
         ),
         'F' => 
         array (
@@ -49,6 +53,10 @@ class ComposerStaticInit0d27dc498cc2034d7dac5f64accced16
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
         'Slim\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/psr7/src',
@@ -60,6 +68,14 @@ class ComposerStaticInit0d27dc498cc2034d7dac5f64accced16
         'Selective\\BasePath\\' => 
         array (
             0 => __DIR__ . '/..' . '/selective/basepath/src',
+        ),
+        'Respect\\Validation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/respect/validation/library',
+        ),
+        'Respect\\Stringifier\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/respect/stringifier/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -78,10 +94,6 @@ class ComposerStaticInit0d27dc498cc2034d7dac5f64accced16
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
-        ),
-        'JsonSchema\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/justinrainbow/json-schema/src/JsonSchema',
         ),
         'Fig\\Http\\Message\\' => 
         array (

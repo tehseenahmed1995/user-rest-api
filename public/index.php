@@ -6,6 +6,12 @@ use App\config\Db;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+//temp fix to handle CORS on localhost fo react application
+header('Access-Control-Allow-Origin:*');
+header('Access-Control-Allow-Headers:X-Request-With');
+header('Access-Control-Allow-Methods: *');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+
 $app = AppFactory::create();
 
 $app->addRoutingMiddleware();

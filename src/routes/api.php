@@ -5,8 +5,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Faker\Factory as FakerFactory;
 
-
-// require_once __DIR__ . '/../middleware/dataValidator.php';
+require_once  __DIR__  . '/../helper/ValidationHelper.php';
 
 /**
  * Route to get all users
@@ -19,9 +18,9 @@ use Faker\Factory as FakerFactory;
 $app->get('/users', function (Request $request, Response $response) {
   $queryParams = $request->getQueryParams();
   // Default to page 1 if not provided
-  $page = trim($queryParams['page']) ?? 1;
+  $page = $queryParams['page'] ?? 1;
   // Default to 30 records per page if not provided
-  $perPage = trim($queryParams['per_page']) ?? 30;
+  $perPage = $queryParams['per_page'] ?? 30;
   // Calculate the OFFSET based on the page and perPage values
   $offset = ($page - 1) * $perPage;
 
@@ -31,10 +30,10 @@ $app->get('/users', function (Request $request, Response $response) {
     $db = new Db();
     $conn = $db->connect();
     $stmt = $conn->prepare($sql);
- 
+
     $stmt->bindParam(':perPage', $perPage, PDO::PARAM_INT);
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-    
+
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $db = null;
@@ -71,13 +70,23 @@ $app->get('/user/{id}', function (Request $request, Response $response, array $a
     $db = new Db();
     $conn = $db->connect();
     $stmt = $conn->query($sql);
-    $user = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $user = $stmt->fetch(PDO::FETCH_OBJ);
+
     $db = null;
 
-    $response->getBody()->write(json_encode(['data' => $user]));
+    $responseData = [];
+    $statusCode = 200;
+    if ($user) {
+      $responseData = ['data' => $user];
+    } else {
+      $responseData = ['message' => ['User not found']];
+      $statusCode = 404;
+    }
+
+    $response->getBody()->write(json_encode($responseData));
     return $response
       ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
+      ->withStatus($statusCode);
   } catch (PDOException $e) {
     $error = array(
       "message" => $e->getMessage()
@@ -134,7 +143,7 @@ $app->post('/user/add', function (Request $request, Response $response, array $a
       ->withHeader('content-type', 'application/json')
       ->withStatus(500);
   }
-});
+})->add(ValidationHelper::class);
 
 
 /**
@@ -164,14 +173,22 @@ $app->put('/user/{id}', function (Request $request, Response $response, array $a
     $stmt->bindParam(':name', $name);
     $stmt->bindParam(':email', $email);
 
-    $result = $stmt->execute();
+    $stmt->execute();
+    $rowCount = $stmt->rowCount();
 
     $db = null;
-
-    $response->getBody()->write(json_encode(["message" => "User updated successfully"]));
+    $responseData = [];
+    $statusCode = 200;
+    if (!empty($rowCount)) {
+      $responseData = ["message" => "User updated successfully"];
+    } else {
+      $responseData = ["message" => "User record not found or no changes were made."];
+      $statusCode = 400;
+    }
+    $response->getBody()->write(json_encode($responseData));
     return $response
       ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
+      ->withStatus($statusCode);
   } catch (PDOException $e) {
     $error = array(
       "message" => $e->getMessage()
@@ -182,7 +199,7 @@ $app->put('/user/{id}', function (Request $request, Response $response, array $a
       ->withHeader('content-type', 'application/json')
       ->withStatus(500);
   }
-});
+})->add(ValidationHelper::class);
 
 /**
  * Route to delete user
@@ -201,13 +218,22 @@ $app->delete('/user/{id}', function (Request $request, Response $response, array
     $conn = $db->connect();
 
     $stmt = $conn->prepare($sql);
-    $result = $stmt->execute();
+    $stmt->execute();
+    $rowCount = $stmt->rowCount();
 
     $db = null;
-    $response->getBody()->write(json_encode(["message" => "User deleted successfully"]));
+      $responseData = [];
+      $statusCode = 200;
+      if (!empty($rowCount)) {
+          $responseData = ["message" => "User deleted successfully"];
+      } else {
+          $responseData = ["message" => "User record not found."];
+          $statusCode = 400;
+      }
+    $response->getBody()->write(json_encode($responseData));
     return $response
       ->withHeader('content-type', 'application/json')
-      ->withStatus(200);
+      ->withStatus($statusCode);
   } catch (PDOException $e) {
     $error = array(
       "message" => $e->getMessage()
@@ -337,9 +363,9 @@ $app->post('/user/location-transactions', function (Request $request, Response $
 
   $queryParams = $request->getQueryParams();
   // Default to page 1 if not provided
-  $page = trim($queryParams['page']) ?? 1;
+  $page = $queryParams['page'] ?? 1;
   // Default to 30 records per page if not provided
-  $perPage = trim($queryParams['per_page']) ?? 30;
+  $perPage = $queryParams['per_page'] ?? 30;
   // Calculate the OFFSET based on the page and perPage values
   $offset = ($page - 1) * $perPage;
 
@@ -363,16 +389,16 @@ $app->post('/user/location-transactions', function (Request $request, Response $
     $conn = $db->connect();
 
     $stmt = $conn->prepare($sql);
-    
+
 
     $stmt->bindParam(':location', $location);
     $stmt->bindParam(':date', $date);
     $stmt->bindParam(':perPage', $perPage, PDO::PARAM_INT);
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-    
+
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
 
     $response->getBody()->write(json_encode(['data' => $result]));
     return $response
